@@ -1,4 +1,4 @@
-# Flask路由分发及访问静态资源
+# Flask路由分发及转换器
 
 ## 引言
 
@@ -38,10 +38,6 @@ if __name__ == "__main__":
     app.run()
     
 ```
-
-<br/>
-
-。。。
 
 <br/>
 
@@ -223,146 +219,115 @@ Map([<Rule '/post_only' (OPTIONS, POST) -> post_only>,
 
 <br/>
 
-## 访问静态资源
+## 路由转换器
 
-### 准备资源
-
-> 先准备一个 `hui.html` 的静态文件存放在 `static` 目录下
-
-
-
-![项目目录结构](https://img-blog.csdnimg.cn/20210425162953102.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzQzNjI5ODU3,size_16,color_FFFFFF,t_70)
+> 有时我们需要将同一类URL映射到同一个视图函数处理
+>
+> 比如：使用同一个视图函数 来显示不同用户的个人信息。
 
 <br/>
 
-`app.py` 内容如下
+### Flask内置转换器
+
+#### 字符串转换器
 
 ```python
 """
-Author: hui
-Desc: { Flask 路由分发及访问静态资源 }
+@Author: Hui
+@Desc: { flask框架的转换器练习 }
 """
-from flask import Flask, url_for, redirect
-
+from flask import Flask
 
 app = Flask(__name__)
 
+# str转换器 不加转换器类型， 默认是普通字符串规则（除了/的字符）
+@app.route('/user/<username>')
+def user_str(username):
+    response = 'hello {}'.format(username)
+    return response
 
-@app.route("/")
-def index():
-    return "index page"
 
-
-if __name__ == "__main__":
+if __name__ == '__main__':
     app.run()
     
 ```
 
-运行 `Flask` 程序，在浏览器网址栏上分别输入 
+<br/>
 
-- `http://127.0.0.1:5000/hui.html`
--  `http://127.0.0.1:5000/static/hui.html`
+**注意：视图函数里接受的参数必须和 `route` 捕获尖括号 `<>` 里的参数一致。**
 
-![访问静态资源](https://img-blog.csdnimg.cn/20210425164114714.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzQzNjI5ODU3,size_16,color_FFFFFF,t_70)
-
-可以发现就只有`http://127.0.0.1:5000/static/hui.html`访问成功。那是因为`flask` 程序的静态文件的目录，默认就是 `static`，访问静态资源的路径前缀默认是 `/static`
+![字符串转换器](https://img-blog.csdnimg.cn/20210425201831524.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzQzNjI5ODU3,size_16,color_FFFFFF,t_70)
 
 <br/>
 
-### 源码查看
+#### 整型转换器
 
 ```python
-app = Flask(__name__)
-```
-
-`flask` 底层是让 `flask.helpers.get_root_path` 函数通过传入这个 `__name__` 名字 **确定程序的根目录**，以便获得静态文件和模板文件的目录。
-
-**Flask部分源码展示**
-
-```python
-def get_root_path(import_name):
-    """Returns the path to a package or cwd if that cannot be found.  This
-    returns the path of a package or the folder that contains a module.
-
-    Not to be confused with the package path returned by :func:`find_package`.
-    """
-    # Module already imported and has a file attribute.  Use that first.
-    mod = sys.modules.get(import_name)
-    if mod is not None and hasattr(mod, "__file__"):
-        return os.path.dirname(os.path.abspath(mod.__file__))
-
-  ...省略...
-```
-
-<br/>
-
-我们在程序中简单模仿一下
-
-```python
-"""
-test.py 用于测试 Python 语法
-"""
-import os
-import sys
-
-# 获取模块对象
-mod = sys.modules.get(__name__)
-
-# 获取当前模块所在目录
-root_path = os.path.dirname(os.path.abspath(mod.__file__))
-
-
-print('__name__\t', __name__)
-print('mod\t', mod)
-print('mod.__file__\t', mod.__file__)
-print('root_path\t', root_path)
+# int转换器
+@app.route('/user/<int:user_id>')
+def user_int(user_id):
+    response = 'hello {}'.format(user_id)
+    return response
 
 ```
 
+![整型转换器](https://img-blog.csdnimg.cn/20210425203647764.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzQzNjI5ODU3,size_16,color_FFFFFF,t_70)
+
 <br/>
 
-运行结果
+#### 路径转换器
 
 ```python
-__name__	 __main__
+# path转换器
+@app.route('/user/<path:user>')
+def user_path(user):
+    response = 'hello {}'.format(user)
+    return response
 
-mod	 <module '__main__' from 'C:/Users/Administrator/Desktop/FlaskDemo/02-FlaskRoute/test.py'>
-
-mod.__file__	 C:/Users/Administrator/Desktop/FlaskDemo/02-FlaskRoute/test.py
-    
-root_path	 C:\Users\Administrator\Desktop\FlaskDemo\02-FlaskRoute
 ```
 
-<br/>
-
-### 更改静态资源访问路径和目录
-
-> 可以在创建 `flask` 应用实例时指定 `static_url_path`、`static_folder` 参数即可。
+![路径转换器](https://img-blog.csdnimg.cn/20210425204002159.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzQzNjI5ODU3,size_16,color_FFFFFF,t_70)
 
 <br/>
+
+### 自定义转换器
+
+> 自定义一个匹配正则 `url` 的转换器
+
+首先导入 `werkzeug.routing` 中 `BaseConverter`
 
 ```python
-"""
-Author: hui
-Desc: { Flask 访问静态资源 }
-"""
+from werkzeug.routing import BaseConverter
+```
+
+然后自定义类继承 `BaseConverter`
+
+```python
 from flask import Flask, url_for, redirect
+from werkzeug.routing import BaseConverter
 
-"""
-# 创建flask的应用对象
-# __name__表示当前的模块名字
-# 模块名，flask以这个模块所在的目录为总目录，默认这个目录中的static为静态目录，templates为模板目录
-"""
-app = Flask(
-    __name__,
-    static_url_path="/python",  	# 访问静态资源的 url前缀, 默认值是 /static
-    static_folder="resource",  		# 静态文件的目录，默认就是 static
-)
+app = Flask(__name__)
+
+# 自定义正则转换器
+class RegexConverter(BaseConverter):
+    """url正则匹配转换器"""
+
+    def __init__(self, url_map, regex):
+        super().__init__(url_map)
+        self.regex = regex
 
 
-@app.route("/")
-def index():
-    return "index page"
+app.url_map.converters['re'] = RegexConverter
+
+# 匹配手机号码的正则
+MobileRegex = "'0?(13|14|15|17|18)[0-9]{9}'"
+
+
+# 使用自定义的转换器
+@app.route(f"/call/<re({MobileRegex}):tel>")
+def call_tel(tel):
+    response = 'tel: {}'.format(tel)
+    return response
 
 
 if __name__ == "__main__":
@@ -372,17 +337,76 @@ if __name__ == "__main__":
 
 <br/>
 
-新增 `resource` 目录并添加 `index.html` ，然后运行程序，在浏览器网址栏上输入
+![自定义正则转换器](https://img-blog.csdnimg.cn/20210425213027896.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzQzNjI5ODU3,size_16,color_FFFFFF,t_70)
 
-- `http://127.0.0.1:5000/python/index.html`
+<br/>
 
-![更改静态资源目录与访问前缀](https://img-blog.csdnimg.cn/20210425171010159.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzQzNjI5ODU3,size_16,color_FFFFFF,t_70)
+#### 重写to_python()、to_url()方法
+
+> `to_python()` 用于处理转换器提取出来的参数，可以进行修改。
+>
+> `to_url()` 使用 url_for() 时调用，其结果将作为 `url_for`的返回值。
+
+```python
+# 自定义正则转换器
+class RegexConverter(BaseConverter):
+    """url正则匹配转换器"""
+
+    def __init__(self, url_map, regex):
+        super().__init__(url_map)
+        self.regex = regex
+
+    def to_python(self, value):
+        print("to_python() called...")
+        print(f"value, {value}")
+        # value是在路径进行正则表达式匹配的时候提取的参数
+        # 留了一步处理提取出来参数
+        # 这里返回值是最终解析的结果
+        return 'tel update 110'
+        # return value
+
+    def to_url(self, value):
+        """使用 url_for() 时调用"""
+        # 可以改变 url_for() 处理的结果
+        print("to_url() called...")
+        print(f"value, {value}")
+        return "15811111111"
+        # return value
+        
+                
+app.url_map.converters['re'] = RegexConverter
+
+# 匹配手机号码的正则
+MobileRegex = "'0?(13|14|15|17|18)[0-9]{9}'"
+
+
+# 使用自定义的转换器
+@app.route(f"/call/<re({MobileRegex}):tel>")
+def call_tel(tel):
+    response = 'tel: {}'.format(tel)
+    return response
+
+
+@app.route("/call")
+def call():
+    url = url_for('call_tel', tel='13577881658')
+    print(f'url -> {url}')
+    return redirect(url)        
+```
+
+一般都无需重写，使用父类的就行。等有需求时在使用。
+
+<br/>
+
+![重写to_python](https://img-blog.csdnimg.cn/20210425214349491.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzQzNjI5ODU3,size_16,color_FFFFFF,t_70)
+
+<br/>
 
 ## 源代码
 
 源代码已上传到 `Gitee` [HuiDBK/FlaskBasic - 码云 - 开源中国 (gitee.com)](https://gitee.com/huiDBK/flask-basic/tree/master)，欢迎大家来访。
 
-**✍ 码字不易，请多多关照**
+**✍ 码字不易，请多多关照。**
 
 <br/>
 
