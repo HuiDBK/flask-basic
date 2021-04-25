@@ -190,6 +190,8 @@ if __name__ == '__main__':
 
 ```
 
+`app = Flask(__name__)` Flask类的实例创建，只有一个必须指定的参数，即程序主模块名或包的名字。
+
 像 `hello()` 这样的被 `app.route()`  装饰的函数称为视图函数 `view function`。`app.route('/')` 接收的参数是Web程序访问的路径，视图函数返回的响应可以是包含的 `html` 的简单的字符串，也可以是复杂的表单。
 
 > 处理 URL 和函数之间关系的程序称为 **路由**
@@ -203,6 +205,14 @@ http://127.0.0.1:5000/hello
 ```
 
 ![flask hello](https://img-blog.csdnimg.cn/20210422234200745.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzQzNjI5ODU3,size_16,color_FFFFFF,t_70)
+
+<br/>
+
+## 源代码
+
+源代码已上传到 `Gitee` [HuiDBK/FlaskBasic - 码云 - 开源中国 (gitee.com)](https://gitee.com/huiDBK/flask-basic/tree/master)，欢迎大家来访。
+
+**✍ 码字不易，请多多关照。**
 
 <br/>
 
