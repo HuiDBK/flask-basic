@@ -406,7 +406,7 @@ def call():
 
 源代码已上传到 `Gitee` [HuiDBK/FlaskBasic - 码云 - 开源中国 (gitee.com)](https://gitee.com/huiDBK/flask-basic/tree/master)，欢迎大家来访。
 
-**✍ 码字不易，请多多关照。**
+**✍ 码字不易，还望各位大侠多多支持:heart:。**
 
 <br/>
 
