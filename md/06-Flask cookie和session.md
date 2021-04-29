@@ -8,13 +8,13 @@
 >
 > cookie 存储的数据量有限，不同的浏览器有不同的存储大小，但一般不超过 `4kb`。
 >
-> 因此使用cookie只能存储一些小量的数据。
+> 因此使用 cookie 只能存储一些小量的数据。
 
 <br/>
 
 ### Session
 
-> `session` 和 cookie 的作用有点类似，都是为了存储用户相关的信息。不同的是，**cookie 是存储在本地浏览器，而 session 存储在服务器。**存储在服务器的数据会更加安全，不容易被窃取。但存储在服务器也有一定的弊端，就是会占用服务器的资源，但现在服务器已经发展至今，存储一些 session 信息还是绰绰有余的。
+> `session` 和 cookie 的作用有点类似，都是为了存储用户相关的信息。不同的是，**cookie 是存储在本地浏览器，而 session 存储在服务器。** 存储在服务器的数据会更加安全，不容易被窃取。但存储在服务器也有一定的弊端，就是会占用服务器的资源，但现在服务器已经发展至今，存储一些 session 信息还是绰绰有余的。
 
 **cookie 和 session 结合使用**：cookie 和 session 的使用已经出现了一些非常成熟的方案。一般有两种存储方式
 
@@ -333,6 +333,18 @@ app.permanent_session_lifetime = timedelta(seconds=60)
 ```
 
 ![设置session指定过期时间](https://img-blog.csdnimg.cn/20210429194156417.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzQzNjI5ODU3,size_16,color_FFFFFF,t_70)
+
+<br/>
+
+### 删除session
+
+```python
+@app.route("del_session")
+def del_session():
+    session.pop("name")
+    # session.clear() # 删除session所有信息
+    return "del session name"
+```
 
 <br/>
 

@@ -34,5 +34,12 @@ def login():
     return "set session name"
 
 
+@app.route("del_session")
+def del_session():
+    session.pop("name")
+    # session.clear() # 删除session所有信息
+    return "del session name"
+
+
 if __name__ == "__main__":
     app.run()
