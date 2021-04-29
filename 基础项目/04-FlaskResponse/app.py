@@ -20,8 +20,8 @@ def index():
     header_list = [("name", "hui"), ("age", 21)]
 
     header_dict = {
-        "Content-Type": " text/html; charset=utf-8",  # 响应返回的数据类型
-        "Cookie": "name=hui; age=21"  # 响应设置cookie
+        "Content-Type": " text/html; charset=utf-8",    # 响应返回的数据类型
+        "Set-Cookie": "name=hui; Path=/",               # 响应设置cookie
     }
 
     #      响应体        状态码    响应头
@@ -57,7 +57,7 @@ def resp_json():
 
 # 自己设置重定向信息
 @app.route('/baidu')
-def red_baidu():
+def redirect_baidu():
     resp = make_response()
     resp.status = "302"
     resp.headers['Location'] = "http://www.baidu.com"
@@ -66,7 +66,7 @@ def red_baidu():
 
 # redirect 响应重定向
 @app.route("/csdn")
-def red_csdn():
+def redirect_csdn():
     csdn_url = "https://blog.csdn.net/qq_43629857"
     return redirect(csdn_url)
 

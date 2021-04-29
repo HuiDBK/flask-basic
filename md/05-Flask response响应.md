@@ -61,7 +61,7 @@ def index():
 ```python
 header_dict = {
     "Content-Type": " text/html; charset=utf-8",# 响应返回的数据类型
-    "Cookie": "name=hui; age=21"    			# 响应设置cookie
+    "Set-Cookie": "name=hui; Path=/"    			# 响应设置cookie
 }
 return "index page", 200, header_dict   
 ```
@@ -70,7 +70,7 @@ return "index page", 200, header_dict
 
 浏览器开发者工具查看响应信息
 
-![查看响应信息](https://img-blog.csdnimg.cn/20210427142927956.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzQzNjI5ODU3,size_16,color_FFFFFF,t_70)
+![查看响应体信息](https://img-blog.csdnimg.cn/20210428200713254.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzQzNjI5ODU3,size_16,color_FFFFFF,t_70)
 
 <br/>
 
